@@ -6,6 +6,8 @@ class PDDict
   
   #actual hash-container of dictionary
   attr_reader :data
+  #reference counting hash
+  attr_reader :ref_stat
   #file, which keeps dictionary data between runs (JSON-formatted)
   attr_reader :storage
 
@@ -13,6 +15,7 @@ class PDDict
   def initialize(init_data)
     raise ArgumentError unless (init_data.is_a? String)
     @data = {}
+    @ref_stat = {}
     if valid?(init_data) #proper word, init dictionary with it
       @data[process_word(init_data)] = nil
     else #may be filename of storage
@@ -27,12 +30,21 @@ class PDDict
   
   #Adds definition for existing word. Also adds new words to define
   def add_definition(word, definition)
-    if (@data.has_key?(word) and @data[word] == nil and definition.is_a? String)
+    if (@data.has_key?(word) and @data[word].nil? and definition.is_a? String)
       @data[word] = definition
-      definition.split.each do | w |
-          new_word = process_word(w)
-          if valid?(new_word) and !@data.has_key?(new_word)
-            @data[new_word] = nil
+      new_words = definition.split.map { |w| process_word(w) }.uniq
+      new_words.each do |new_word|
+          if valid?(new_word) 
+            @data[new_word] = nil unless @data.has_key?(new_word)
+
+            #word repeating in definition doesn't count as reference
+            unless (word == new_word) 
+              if (@ref_stat[new_word].nil?) 
+                @ref_stat[new_word] = 1
+              else
+                @ref_stat[new_word] += 1
+              end
+            end
           end
       end
     else

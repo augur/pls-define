@@ -28,16 +28,30 @@ class TestPDDict < Test::Unit::TestCase
     assert_equal({"test" => "!,some' ,45; definition", 
                   "some" => nil, "definition" => nil}, 
                  test_obj.data)
+    assert_equal({"some" => 1, "definition" => 1},
+                test_obj.ref_stat)
     
     test_obj.add_definition("some", "definition!!123 test-'`;")
     assert_equal({"test" => "!,some' ,45; definition", 
                   "some" => "definition!!123 test-'`;", "definition" => nil}, 
                  test_obj.data)
+    assert_equal({"some" => 1, "definition" => 2, "test" => 1},
+                test_obj.ref_stat)
     
     test_obj.add_definition("definition", "1999")
     assert_equal({"test" => "!,some' ,45; definition", 
                   "some" => "definition!!123 test-'`;", "definition" => "1999"}, 
                  test_obj.data)
+    
+    #Check reference count statistics more deeply
+    #Multiple references in definition should be counted as 1
+    test_obj = PDDict.new("test")
+    test_obj.add_definition("test", "some definition")
+    test_obj.add_definition("definition", "some some definition")
+    test_obj.add_definition("some", "test definition")
+    assert_equal({"test" => 1, "some" => 2, "definition" => 2},
+                  test_obj.ref_stat)
+    
     
     #check tabs and newlines in definition
     test_obj = PDDict.new("test")
