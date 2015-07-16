@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-#encoding: utf-8
+# encoding: utf-8
 
 require_relative "pd_dict"
 require "test/unit"
