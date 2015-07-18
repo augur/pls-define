@@ -37,6 +37,7 @@ class PDDict
   
   #if it returns nil, then dictionary is completed
   def request_definition()
+    log @undef_words.size.to_s + ' words to define.'
     result = @undef_words[0]
     log "define: '#{result}'"
     return result    
@@ -46,7 +47,7 @@ class PDDict
   #Adds definition for existing word. Also adds new words to define
   def add_definition(word, definition)
     if (@data.has_key?(word) and @data[word].nil? and definition.is_a? String)
-      log "'#{word}'' defined as: '#{definition}'"
+      log "'#{word}' defined as: '#{definition}'"
       @data[word] = definition
       @undef_words.delete(word)
       new_words = definition.split.map { |w| process_word(w) }.uniq
@@ -109,11 +110,14 @@ class PDDict
   def load_data() 
     raise ArgumentError unless File.exist?(@storage)
     @data, @undef_words, @ref_stat = JSON.parse(File.read(@storage))
+    log 'load success'
   end
 
   
   def save_data()
     File.open(@storage, 'w') { |f| f.puts [@data, @undef_words, @ref_stat].to_json }
+    log 'save success'
   end
   
 end
+

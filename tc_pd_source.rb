@@ -18,6 +18,10 @@ class TestPDSource < Test::Unit::TestCase
     assert_match(/\bfruit\b/, get_definition("orange"))
     #Tolerance to capitalized words
     assert_match(/\bKingdom\b/, get_definition("england"))
+    #Exclude information within html tags
+    assert_no_match(/\bclass\b/, get_definition("light"))
+    #Nonexistent words
+    assert_match(/\bNOTFOUND\b/, get_definition("rndmstuff"))
   end
   
   
@@ -45,3 +49,4 @@ class TestPDSource < Test::Unit::TestCase
   end 
   
 end
+
