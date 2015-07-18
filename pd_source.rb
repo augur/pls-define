@@ -45,13 +45,18 @@ module PDSourceWeb
   #Aye, regexing html isn't very good, unless you need just a few things
   #Dont want to include nokigiri as a requirement
   def parse_body(body, word)
-    body = body.partition('<h1 class="head-entry"><span class="me" data-syllable').last
-    origin_word = body.match(/">(.*?)<\/span>/)[1].downcase
-    if (word == origin_word) 
-      body = body.partition('def-content">')[2]
-      body = body.match(/(.*?)<\/div>/)[1]
+    body = body.partition('<h1 class="head-entry"><span class="me"').last
+    origin_word = body.match(/>(.*?)<\/span>/)[1].downcase
+    if (word == origin_word)
+      if body.include?('def-content')
+        body = body.partition('def-content">')[2]
+      else
+        body = body.partition('def-set">')[2]
+      end
+      res = body.match(/(.*?)<\/div>/)[1]
+      if res == "" then res = body.match(/(.*?)<\/p>/)[1] end
       #get rid of html tags, then return      
-      return body.gsub(/<\/?[^>]+>/, '')
+      return res.gsub(/<\/?[^>]+>/, '')
     else #asked word transformed to origin_word, thus just refer to it.
       return origin_word
     end
