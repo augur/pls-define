@@ -45,8 +45,9 @@ module PDSourceWeb
   #Aye, regexing html isn't very good, unless you need just a few things
   #Dont want to include nokigiri as a requirement
   def parse_body(body, word)
-    body = body.partition('<h1 class="head-entry"><span class="me"').last
-    origin_word = body.match(/>(.*?)<\/span>/)[1].downcase
+    body = body.partition('<h1 class="head-entry"').last
+    #return body
+    origin_word = body.match(/>(.*?)<\/span>/)[1].gsub(/<\/?[^>]+>/, '').downcase
     if (word == origin_word)
       if body.include?('def-content')
         body = body.partition('def-content">')[2]

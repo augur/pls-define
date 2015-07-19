@@ -23,7 +23,9 @@ class TestPDSource < Test::Unit::TestCase
     #Nonexistent words
     assert_match(/\bNOTFOUND\b/, get_definition("rndmstuff"))
     #Hard case with atypic html format:
-    assert_match(/\bgenus\b/, get_definition("morus"))    
+    assert_match(/\bgenus\b/, get_definition("morus"))
+    #Another atypic html format
+    assert_match(/\blaw\b/, get_definition("los"))
   end
   
   
