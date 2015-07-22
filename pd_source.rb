@@ -4,6 +4,9 @@
 require 'net/http'
 require 'uri'
 
+
+NO_DEF = 'NOTFOUND'
+
 module PDSourceUser
   
   def get_definition(word)
@@ -24,7 +27,7 @@ module PDSourceWeb
       body = get_body(url)
       return parse_body(body, word)
     rescue Net::HTTPServerException
-      return "NOTFOUND" #Special word if nothing found
+      return NO_DEF #Special word if nothing found
     end
   end
   
@@ -48,11 +51,14 @@ module PDSourceWeb
     body = body.partition('<h1 class="head-entry"').last
     #return body
     origin_word = body.match(/>(.*?)<\/span>/)[1].gsub(/<\/?[^>]+>/, '').downcase
+    #return origin_word
     if (word == origin_word)
       if body.include?('def-content')
         body = body.partition('def-content">')[2]
-      else
+      elsif body.include?('def-set')
         body = body.partition('def-set">')[2]
+      else
+        return NO_DEF
       end
       res = body.match(/(.*?)<\/div>/)[1]
       if res == "" then res = body.match(/(.*?)<\/p>/)[1] end
