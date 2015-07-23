@@ -53,9 +53,9 @@ module PDSourceWeb
     origin_word = body.match(/>(.*?)<\/span>/)[1].gsub(/<\/?[^>]+>/, '').downcase
     #return origin_word
     if (word == origin_word)
-      if body.include?('def-content')
+      if body.include?('def-content">') # TODO no need in include, just analyse partition()
         body = body.partition('def-content">')[2]
-      elsif body.include?('def-set')
+      elsif body.include?('def-set">')
         body = body.partition('def-set">')[2]
       else
         return NO_DEF
