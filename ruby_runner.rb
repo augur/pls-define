@@ -15,8 +15,7 @@ begin
   init_data = File.exists?(DUMPFILE) ? DUMPFILE : 'Ruby'  
   runner = PDRunner.new(:web, init_data, true)
   runner.run(DUMPFILE, 3)
-rescue Interrupt 
-  break
+rescue Interrupt
 rescue Exception
   puts "Retry in 15 seconds"
   sleep(15)
