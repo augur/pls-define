@@ -113,11 +113,41 @@ class PDDict
     log 'load success'
   end
 
-  
+
   def save_data()
-    File.open(@storage, 'w') { |f| f.puts [@data, @undef_words, @ref_stat].to_json }
-    log 'save success'
+    raise ArgumentError if @storage.nil?
+    prev_save = @storage
+    now_save = @storage + '.new'
+    old_save = @storage + '.old'
+    
+    if File.exist?(now_save)
+      log "Previous save() wasn't successful: check for .new file"
+      i = 0
+      begin
+        i += 1
+        temp_dump = now_save + i.to_s
+      end while File.exist?(temp_dump)
+      File.open(temp_dump, 'w') { |f| f.puts [@data, @undef_words, @ref_stat].to_json }
+      log "data dumped to " + temp_dump
+      return
+    end
+    
+    File.open(now_save, 'w') { |f| f.puts [@data, @undef_words, @ref_stat].to_json }
+    
+    prev_size = File.exist?(prev_save) ? File.size(prev_save) : 0
+    now_size = File.size(now_save)
+    
+    if now_size >= prev_size
+        # all is fine
+        File.delete(old_save) if File.exist?(old_save)
+        File.rename(prev_save, old_save) if File.exist?(prev_save)
+        File.rename(now_save, @storage)
+        log 'save success'
+    else
+        # this shouldn't happen
+        raise "Previous save file is larger! Something must be wrong."
+    end
   end
-  
+
 end
 

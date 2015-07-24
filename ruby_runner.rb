@@ -20,5 +20,6 @@ rescue Interrupt
 rescue Exception
   puts "Retry in 15 seconds"
   sleep(15)
-end while true
+  retry
+end
 

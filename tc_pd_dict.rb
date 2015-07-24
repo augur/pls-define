@@ -19,6 +19,11 @@ class TestPDDict < Test::Unit::TestCase
     assert_raise(ArgumentError) { (PDDict.new("Кириллица")) }
     assert_raise(ArgumentError) { (PDDict.new(nil)) }
     assert_raise(ArgumentError) { (PDDict.new(125)) }
+    
+    #Empty or non-consistent files also must raise exception
+    File.open("empty.json", "w") {}
+    assert_raise(JSON::ParserError) { (PDDict.new("empty.json")) }
+    File.delete("empty.json")
   end
 
   
@@ -92,10 +97,20 @@ class TestPDDict < Test::Unit::TestCase
     
     File.delete('dump.json')
   end
+  
+  def test_abnormal_save
+    # Should attempt to save data to temp dump if previous save wasn't completed 
+    File.open('dump.json.new', 'w') {}
+    p = PDDict.new("test")
+    p.save 'dump.json'
+    assert(File.exist?('dump.json.new1'))
+    File.delete('dump.json.new')
+    File.delete('dump.json.new1')
+  end
 
   
   def test_save_raise
-    assert_raise(TypeError) {
+    assert_raise(ArgumentError) {
       p = PDDict.new("test")
       p.save
     }
@@ -104,14 +119,23 @@ class TestPDDict < Test::Unit::TestCase
       p = PDDict.new("test")
       p.save 42
     }
-
+    
     assert_raise(Errno::EACCES) {
       p = PDDict.new("test")
       p.save '//\\'
     }
+    
+    # Shouldn't permit to overwrite file with a larger content
+    File.open('dump.json', 'w') {|f| f.puts "[1234567890,12345678901234567,8901234567890]" }
+    assert_raise(RuntimeError) {
+      p = PDDict.new("t")
+      p.save 'dump.json'
+    }
+    File.delete('dump.json.new')
+    File.delete('dump.json')
   end
-  
-  
+
+
   def test_add_def_raise
     assert_raise(ArgumentError) {
       test_obj = PDDict.new("test")      

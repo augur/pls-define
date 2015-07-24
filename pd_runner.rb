@@ -13,7 +13,7 @@ class PDRunner
   #Here lies PDDict
   attr_reader :dict
 
-  
+
   def initialize(source, init_data, verbose = false)
     @verbose = verbose
     @logger = Logger.new(STDOUT) if @verbose
@@ -22,8 +22,8 @@ class PDRunner
     
     @dict = PDDict.new(init_data, @verbose)
   end
-  
-  
+
+
   def set_source(source)
     case source
       when :user
@@ -35,7 +35,7 @@ class PDRunner
     end
     log "Source set to #{source}"
   end
-  
+
 
   def run(savename = nil, cooldown = 1.0)
     begin
@@ -55,22 +55,21 @@ class PDRunner
     end while true
     save(savename) #This only occurs if loop ended by break
   end
-  
-  
-  
+
+
   private
-  
-  
+
+
   def save(savename)
     log "Saving to " + savename
     @dict.save(savename)
   end
-  
-  
+
+
   #Same as in PDDict. Seems need to be reworked as mixin.
   def log(s)
     @logger.info(s) if @verbose
   end
-  
+
 end
 
