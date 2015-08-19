@@ -5,6 +5,7 @@ require 'net/http'
 require 'uri'
 
 require 'pd_dict'
+require 'pd_source' #Mostly for NO_DEF const
 
 class PDStatView
   
@@ -21,6 +22,29 @@ class PDStatView
     end
   end
   
+  def ui_loop
+    #loop
+      #read keys
+      #case print data
+      #exit on interrupt
+  end
+  
+
+  def get_count
+    return dict.data.size
+  end
+  
+  
+  def get_top_refs(n = 100, rev = true)
+    sorted = dict.ref_stat.sort_by {|word, count| count}
+    sorted.reverse! if rev
+    return sorted[0..n] 
+  end
+  
+  
+  def get_no_def
+    return (dict.data.select {|k, v| v == NO_DEF}).keys
+  end
   
   
   private
