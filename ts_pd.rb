@@ -5,4 +5,5 @@ require "test/unit"
 require_relative "tc_pd_dict"
 require_relative "tc_pd_source"
 require_relative "tc_pd_runner"
+require_relative "tc_pd_stat_view"
 

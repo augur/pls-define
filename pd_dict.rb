@@ -42,7 +42,7 @@ class PDDict
     log "define: '#{result}'"
     return result    
   end
-
+  
   
   #Adds definition for existing word. Also adds new words to define
   def add_definition(word, definition)
@@ -68,7 +68,19 @@ class PDDict
       raise ArgumentError
     end
   end
-
+  
+  
+  #Checks dictionary for word, safely
+  def get_definition(unsafe_word)
+    return @data[process_word(unsafe_word)]
+  end
+  
+  
+  def get_ref_count(unsafe_word)
+    res = @ref_stat[process_word(unsafe_word)]
+    return res || 0
+  end
+  
   
   def save(storage = nil)
     unless storage.nil?

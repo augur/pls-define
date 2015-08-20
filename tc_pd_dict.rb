@@ -81,7 +81,25 @@ class TestPDDict < Test::Unit::TestCase
     test_obj.add_definition("stuff", "test")
     assert_equal(nil, test_obj.request_definition)    
   end
-
+  
+  
+  def test_get_def_or_ref_count
+    test_obj = PDDict.new("teST")
+    test_obj.add_definition("test", "doesn't")
+    
+    # Check definition in other updowncase
+    assert_equal("doesn't", test_obj.get_definition("TEst"))
+    assert_equal(0, test_obj.get_ref_count("TeSt"))
+    
+    # Some form of "doesn't" must be here
+    w = test_obj.request_definition
+    test_obj.add_definition(w, "sOmE explanation!!")
+    
+    # Check with forbidden symbols
+    assert_equal("sOmE explanation!!", test_obj.get_definition("doesn't"))
+    assert_equal(1, test_obj.get_ref_count("doesn't"))
+  end
+  
   
   def test_save_load
     p = PDDict.new("test")
@@ -98,6 +116,7 @@ class TestPDDict < Test::Unit::TestCase
     File.delete('dump.json')
   end
   
+  
   def test_abnormal_save
     # Should attempt to save data to temp dump if previous save wasn't completed 
     File.open('dump.json.new', 'w') {}
@@ -107,7 +126,7 @@ class TestPDDict < Test::Unit::TestCase
     File.delete('dump.json.new')
     File.delete('dump.json.new1')
   end
-
+  
   
   def test_save_raise
     assert_raise(ArgumentError) {

@@ -29,7 +29,12 @@ class PDStatView
       #exit on interrupt
   end
   
-
+  
+  def self_consistent?
+    return dict.request_definition.nil?
+  end
+  
+  
   def get_count
     return dict.data.size
   end
@@ -38,7 +43,7 @@ class PDStatView
   def get_top_refs(n = 100, rev = true)
     sorted = dict.ref_stat.sort_by {|word, count| count}
     sorted.reverse! if rev
-    return sorted[0..n] 
+    return sorted[0...n] 
   end
   
   
@@ -47,7 +52,20 @@ class PDStatView
   end
   
   
+  def get_word (i = nil)
+    i = rand(get_count) if i.nil?
+    return dict.data.keys[i]
+  end
+  
+  
   private
+  
+  
+  # Return definitions, words and refs
+  def traverse_step(word)
+    
+  end
+  
   
   def get_local(path)
     begin
