@@ -30,6 +30,24 @@ class PDStatView
   end
   
   
+  def ui_traverse(word)
+    decision = ""
+    until decision == '0'
+      print word + ": "
+      defn, words = traverse_step(word)
+      break if words.nil?
+      puts defn
+      words.each_with_index do |w, i|
+        puts "#{i+1}. #{w[0]} (#{w[1]})"
+      end
+      puts "...\n0. Exit"
+      print "Choose next word by its index: "
+      decision = gets.chomp!
+      word = words[decision.to_i-1][0]
+    end
+  end
+  
+  
   def self_consistent?
     return dict.request_definition.nil?
   end
@@ -63,7 +81,9 @@ class PDStatView
   
   # Return definitions, words and refs
   def traverse_step(word)
-    
+    defn = dict.get_definition(word)
+    words = defn.split.map { |w| [w, dict.get_ref_count(w)] } unless defn.nil?
+    return defn, words
   end
   
   
